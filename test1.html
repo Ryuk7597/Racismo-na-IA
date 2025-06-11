@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Racismo na Inteligência Artificial: Uma Análise Interativa</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A thematic, single-page scrolling application. The structure is designed to guide the user through a narrative: 1. **Introdução**: Captures attention by defining the core problem. 2. **Contexto Histórico**: Provides the foundational understanding of historical racial disparities in Brazil and the US, arguing that AI bias is rooted in this history. 3. **A Desigualdade em Números**: Presents the current statistical reality using interactive charts, making the abstract data tangible. 4. **Estudos de Caso**: Moves from broad concepts to concrete examples of algorithmic bias, demonstrating the real-world impact. 5. **Pilares do Viés**: Breaks down the technical and structural causes of the problem. 6. **Conclusão**: Summarizes the issue and reinforces the call to action. This non-linear, thematic flow is more engaging and intuitive for a web user than the original report's structure, facilitating better understanding and exploration. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Historical slave trade data (Gráficos 1, 2, 3). Goal: Compare historical burdens. Viz/Method: Interactive Bar Chart (Chart.js/Canvas). Interaction: User can select between "Brasil" and "EUA" to see specific timelines. Justification: A dynamic chart is more engaging than three static images and allows direct comparison on the same axis.
+        - Report Info: 2022 Census data comparison (Quadro 4). Goal: Compare current socio-economic disparities. Viz/Method: Grouped Bar Chart (Chart.js/Canvas). Interaction: Tooltips on hover provide exact figures. Justification: A bar chart is ideal for comparing discrete categories (Renda, Estudo, etc.) across two countries (Brasil, EUA), making disparities instantly visible.
+        - Report Info: Gender Shades study results. Goal: Inform about a specific case of bias. Viz/Method: Dynamic Bar Chart (Chart.js/Canvas). Interaction: Buttons to switch between "Homens" and "Mulheres" data views. Justification: Allows users to actively explore the intersectional aspect of the data, which is the core finding of the study.
+        - Report Info: Three pillars of algorithmic bias. Goal: Organize and explain complex concepts. Viz/Method: Interactive Tabbed Section (HTML/CSS/JS). Interaction: Clicking on a pillar reveals its detailed explanation. Justification: Breaks down dense information into digestible chunks, preventing cognitive overload and improving user engagement over a long text block. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF8;
+            color: #403A3A;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+        }
+
+        .nav-link.active,
+        .nav-link:hover {
+            color: #D35400;
+            border-bottom-color: #D35400;
+        }
+
+        .tab-btn.active {
+            background-color: #D35400;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800">Racismo Algorítmico</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#intro" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Introdução</a>
+                <a href="#history" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Contexto</a>
+                <a href="#data" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Dados</a>
+                <a href="#cases" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Estudos de Caso</a>
+                <a href="#pillars" class="nav-link text-gray-600 border-b-2 border-transparent pb-1">Pilares do Viés</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+
+        <section id="intro" class="text-center mb-24 min-h-[60vh] flex flex-col justify-center items-center">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4 text-gray-900 leading-tight">Racismo na Inteligência
+                Artificial</h2>
+            <p class="text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">Uma análise interativa sobre como vieses
+                históricos são codificados em nossos sistemas digitais, perpetuando a desigualdade sob um véu de
+                neutralidade tecnológica.</p>
+        </section>
+
+        <section id="history" class="mb-24 scroll-mt-24">
+            <h3 class="text-3xl font-bold text-center mb-4 text-gray-900">Raízes Históricas da Desigualdade</h3>
+            <p class="max-w-4xl mx-auto text-center text-gray-600 mb-12">Para entender o racismo algorítmico, é crucial
+                primeiro reconhecer que a tecnologia não surge no vácuo. Ela é construída sobre fundações sociais e
+                históricas. Os dados que alimentam a IA refletem séculos de desigualdades estruturais, originadas em
+                períodos como o tráfico transatlântico de escravizados, cujos efeitos persistem até hoje. Esta seção
+                explora a escala desse legado histórico no Brasil e nos Estados Unidos, fornecendo o contexto necessário
+                para compreender por que os algoritmos podem herdar e amplificar esses vieses.</p>
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100">
+                <div class="text-center mb-6">
+                    <span class="text-lg font-semibold text-gray-800">Fluxo do Tráfico Transatlântico de Escravizados
+                        (1501-1866)</span>
+                    <div class="mt-4 flex justify-center space-x-4">
+                        <button id="btn-brasil"
+                            class="px-4 py-2 text-sm font-medium rounded-md bg-orange-600 text-white shadow">Brasil</button>
+                        <button id="btn-eua"
+                            class="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 text-gray-700">EUA</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="slaveTradeChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="data" class="mb-24 scroll-mt-24">
+            <h3 class="text-3xl font-bold text-center mb-4 text-gray-900">A Desigualdade em Números (2022)</h3>
+            <p class="max-w-4xl mx-auto text-center text-gray-600 mb-12">As estruturas históricas de desigualdade
+                continuam a se manifestar em indicadores socioeconômicos atuais. Os dados dos censos mais recentes do
+                Brasil e dos Estados Unidos revelam disparidades gritantes em áreas fundamentais como renda, educação e
+                segurança. O gráfico abaixo oferece uma comparação direta, ilustrando como o legado do racismo sistêmico
+                se traduz em desvantagens concretas para as populações negras em ambos os países, fornecendo os mesmos
+                dados que, sem tratamento, ensinam a IA a perpetuar a discriminação.</p>
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100">
+                <div class="text-center mb-6">
+                    <span class="text-lg font-semibold text-gray-800">Comparativo Socioeconômico: Brasil vs. EUA</span>
+                </div>
+                <div class="chart-container">
+                    <canvas id="inequalityChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="cases" class="mb-24 scroll-mt-24">
+            <h3 class="text-3xl font-bold text-center mb-4 text-gray-900">Estudos de Caso: O Viés em Ação</h3>
+            <p class="max-w-4xl mx-auto text-center text-gray-600 mb-12">O racismo algorítmico não é um conceito
+                teórico; ele tem consequências tangíveis. Diversos estudos e investigações revelaram como sistemas de
+                IA, usados em larga escala, podem prejudicar grupos minoritários. Desde a falha de softwares de
+                reconhecimento facial em identificar corretamente mulheres negras até algoritmos de crédito que negam
+                empréstimos com base em vieses históricos, os exemplos são muitos. Esta seção destaca um dos casos mais
+                emblemáticos: o estudo "Gender Shades", que expôs as falhas de precisão em tecnologias comerciais.</p>
+            <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg border border-gray-100">
+                <div class="text-center mb-6">
+                    <span class="text-lg font-semibold text-gray-800">Estudo "Gender Shades": Precisão de Reconhecimento
+                        Facial</span>
+                    <div class="mt-4 flex justify-center space-x-4">
+                        <button id="btn-mulheres"
+                            class="px-4 py-2 text-sm font-medium rounded-md bg-orange-600 text-white shadow">Mulheres</button>
+                        <button id="btn-homens"
+                            class="px-4 py-2 text-sm font-medium rounded-md bg-gray-200 text-gray-700">Homens</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="genderShadesChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="pillars" class="mb-24 scroll-mt-24">
+            <h3 class="text-3xl font-bold text-center mb-4 text-gray-900">Os 3 Pilares do Viés Algorítmico</h3>
+            <p class="max-w-4xl mx-auto text-center text-gray-600 mb-12">O preconceito nos sistemas de IA não surge de
+                uma única fonte, mas de uma combinação de fatores ao longo de seu ciclo de vida. A literatura
+                especializada identifica três áreas principais onde o viés pode ser introduzido e amplificado.
+                Compreender esses pilares é essencial para desenvolver estratégias eficazes de mitigação. Explore cada
+                pilar para entender como os dados, o design do algoritmo e a implementação no mundo real contribuem para
+                o problema do racismo algorítmico.</p>
+            <div class="max-w-4xl mx-auto">
+                <div
+                    class="flex flex-col md:flex-row rounded-xl bg-white shadow-lg border border-gray-100 overflow-hidden">
+                    <div class="md:w-1/3 flex flex-col">
+                        <button class="tab-btn flex-1 p-4 text-left font-semibold active" data-tab="1">
+                            <span class="text-2xl mr-2">1.</span> Viés nos Dados de Treinamento
+                        </button>
+                        <button class="tab-btn flex-1 p-4 text-left font-semibold" data-tab="2">
+                            <span class="text-2xl mr-2">2.</span> Viés no Desenho do Algoritmo
+                        </button>
+                        <button class="tab-btn flex-1 p-4 text-left font-semibold" data-tab="3">
+                            <span class="text-2xl mr-2">3.</span> Viés na Implementação
+                        </button>
+                    </div>
+                    <div class="md:w-2/3 p-8 bg-gray-50">
+                        <div id="tab-content-1" class="tab-content">
+                            <h4 class="font-bold text-xl mb-3">Viés nos Dados de Treinamento</h4>
+                            <p class="text-gray-700">A fonte mais comum de viés. Se os dados usados para treinar um
+                                sistema de IA refletem desigualdades e preconceitos históricos, o algoritmo aprenderá e
+                                reproduzirá essas mesmas desigualdades. Por exemplo, bancos de imagens para treinamento
+                                de reconhecimento facial que são predominantemente compostos por rostos de homens
+                                brancos resultam em taxas de erro significativamente maiores para mulheres negras, como
+                                demonstrado no estudo "Gender Shades". Os dados são um espelho da sociedade, com todas
+                                as suas falhas.</p>
+                        </div>
+                        <div id="tab-content-2" class="tab-content hidden">
+                            <h4 class="font-bold text-xl mb-3">Viés no Desenho do Algoritmo</h4>
+                            <p class="text-gray-700">O preconceito pode ser codificado na própria lógica do algoritmo. A
+                                forma como os desenvolvedores definem o "sucesso" ou a "otimização" pode incorporar
+                                vieses. Por exemplo, um algoritmo de contratação que otimiza para "candidatos
+                                semelhantes aos funcionários de sucesso atuais" em uma empresa predominantemente branca
+                                e masculina irá discriminar sistematicamente candidatos de outros perfis, mesmo que
+                                sejam altamente qualificados. A escolha de variáveis e métricas é uma decisão humana e,
+                                portanto, suscetível a vieses inconscientes.</p>
+                        </div>
+                        <div id="tab-content-3" class="tab-content hidden">
+                            <h4 class="font-bold text-xl mb-3">Viés na Implementação</h4>
+                            <p class="text-gray-700">Mesmo um algoritmo tecnicamente "justo" pode produzir resultados
+                                discriminatórios quando aplicado em um contexto social complexo e desigual. Um sistema
+                                de policiamento preditivo, por exemplo, pode direcionar mais policiamento para bairros
+                                de minorias simplesmente porque dados históricos mostram mais prisões nessas áreas
+                                (muitas vezes devido ao policiamento já enviesado). Isso cria um ciclo vicioso onde o
+                                algoritmo reforça a desigualdade existente, e o resultado da sua aplicação (mais
+                                prisões) é usado para "provar" que o algoritmo estava correto.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>Uma aplicação interativa baseada na pesquisa "Racismo Na Inteligência Artificial: Uma Revisão Sistemática
+                Da Literatura".</p>
+            <p class="text-sm text-gray-400 mt-2">Autores: Adriele M. de Souza Campos, Douglas T. A. da Silva, Natanael
+                da S. dos Santos.</p>
+            <p class="text-sm text-gray-400">IFMT - Campus Campo Verde | 2025</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chartOptions = {
+                maintainAspectRatio: false,
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#403A3A',
+                            font: {
+                                family: "'Inter', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        bodyFont: {
+                            family: "'Inter', sans-serif"
+                        },
+                        titleFont: {
+                            family: "'Inter', sans-serif"
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#403A3A',
+                            font: {
+                                family: "'Inter', sans-serif"
+                            }
+                        },
+                        grid: {
+                            display: false
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#403A3A',
+                            font: {
+                                family: "'Inter', sans-serif"
+                            }
+                        },
+                        grid: {
+                            color: '#E5E7EB'
+                        }
+                    }
+                }
+            };
+
+            Chart.defaults.font.family = "'Inter', sans-serif";
+
+            const slaveTradeData = {
+                brasil: {
+                    labels: ['1501-1600', '1601-1700', '1701-1800', '1801-1866'],
+                    values: [50000, 560000, 1900000, 1700000]
+                },
+                eua: {
+                    labels: ['1626-1700', '1701-1800', '1801-1866'],
+                    values: [21000, 239000, 114000]
+                }
+            };
+
+            const slaveTradeCtx = document.getElementById('slaveTradeChart').getContext('2d');
+            let slaveTradeChart = new Chart(slaveTradeCtx, {
+                type: 'bar',
+                data: {
+                    labels: slaveTradeData.brasil.labels,
+                    datasets: [{
+                        label: 'Pessoas Desembarcadas (Estimativa)',
+                        data: slaveTradeData.brasil.values,
+                        backgroundColor: 'rgba(211, 84, 0, 0.7)',
+                        borderColor: 'rgba(211, 84, 0, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: chartOptions
+            });
+
+            const btnBrasil = document.getElementById('btn-brasil');
+            const btnEua = document.getElementById('btn-eua');
+
+            btnBrasil.addEventListener('click', () => {
+                updateSlaveTradeChart(slaveTradeData.brasil, 'brasil');
+            });
+            btnEua.addEventListener('click', () => {
+                updateSlaveTradeChart(slaveTradeData.eua, 'eua');
+            });
+
+            function updateSlaveTradeChart(data, activeBtn) {
+                slaveTradeChart.data.labels = data.labels;
+                slaveTradeChart.data.datasets[0].data = data.values;
+                slaveTradeChart.update();
+
+                if (activeBtn === 'brasil') {
+                    btnBrasil.classList.add('bg-orange-600', 'text-white');
+                    btnBrasil.classList.remove('bg-gray-200', 'text-gray-700');
+                    btnEua.classList.add('bg-gray-200', 'text-gray-700');
+                    btnEua.classList.remove('bg-orange-600', 'text-white');
+                } else {
+                    btnEua.classList.add('bg-orange-600', 'text-white');
+                    btnEua.classList.remove('bg-gray-200', 'text-gray-700');
+                    btnBrasil.classList.add('bg-gray-200', 'text-gray-700');
+                    btnBrasil.classList.remove('bg-orange-600', 'text-white');
+                }
+            }
+
+
+            const inequalityData = {
+                labels: ['Renda Média (vs Média Nacional)', 'Anos de Estudo (Média)', 'Taxa de Homicídios (por 100 mil)', 'Representação Política (%)'],
+                datasets: [{
+                    label: 'Brasil (População Negra)',
+                    data: [56, 8.4, 43, 24],
+                    backgroundColor: 'rgba(211, 84, 0, 0.7)',
+                }, {
+                    label: 'EUA (População Negra)',
+                    data: [65, 12.9, 24, 11],
+                    backgroundColor: 'rgba(64, 58, 58, 0.7)',
+                }]
+            };
+
+            const inequalityCtx = document.getElementById('inequalityChart').getContext('2d');
+            const inequalityChart = new Chart(inequalityCtx, {
+                type: 'bar',
+                data: inequalityData,
+                options: {
+                    ...chartOptions,
+                    scales: {
+                        ...chartOptions.scales,
+                        y: { ...chartOptions.scales.y, beginAtZero: true }
+                    },
+                    plugins: {
+                        ...chartOptions.plugins,
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    let value = context.raw;
+                                    if (context.label === 'Renda Média (vs Média Nacional)' || context.label === 'Representação Política (%)') {
+                                        label += value + '%';
+                                    } else if (context.label === 'Anos de Estudo (Média)') {
+                                        label += value + ' anos';
+                                    } else {
+                                        label += value;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+
+            const genderShadesData = {
+                mulheres: {
+                    labels: ['Mulheres de Pele Escura', 'Mulheres de Pele Clara'],
+                    values: [65.3, 92.9],
+                },
+                homens: {
+                    labels: ['Homens de Pele Escura', 'Homens de Pele Clara'],
+                    values: [88, 99.7],
+                }
+            };
+
+            const genderShadesCtx = document.getElementById('genderShadesChart').getContext('2d');
+            let genderShadesChart = new Chart(genderShadesCtx, {
+                type: 'bar',
+                data: {
+                    labels: genderShadesData.mulheres.labels,
+                    datasets: [{
+                        label: 'Taxa de Precisão (%)',
+                        data: genderShadesData.mulheres.values,
+                        backgroundColor: ['#D35400', '#F39C12'],
+                        borderColor: ['#A94402', '#C27C0E'],
+                        borderWidth: 1
+                    }]
+                },
+                options: { ...chartOptions, indexAxis: 'y' }
+            });
+
+            const btnMulheres = document.getElementById('btn-mulheres');
+            const btnHomens = document.getElementById('btn-homens');
+
+            btnMulheres.addEventListener('click', () => {
+                updateGenderShadesChart(genderShadesData.mulheres, 'mulheres');
+            });
+            btnHomens.addEventListener('click', () => {
+                updateGenderShadesChart(genderShadesData.homens, 'homens');
+            });
+
+            function updateGenderShadesChart(data, activeBtn) {
+                genderShadesChart.data.labels = data.labels;
+                genderShadesChart.data.datasets[0].data = data.values;
+                genderShadesChart.update();
+
+                if (activeBtn === 'mulheres') {
+                    btnMulheres.classList.add('bg-orange-600', 'text-white');
+                    btnMulheres.classList.remove('bg-gray-200', 'text-gray-700');
+                    btnHomens.classList.add('bg-gray-200', 'text-gray-700');
+                    btnHomens.classList.remove('bg-orange-600', 'text-white');
+                } else {
+                    btnHomens.classList.add('bg-orange-600', 'text-white');
+                    btnHomens.classList.remove('bg-gray-200', 'text-gray-700');
+                    btnMulheres.classList.add('bg-gray-200', 'text-gray-700');
+                    btnMulheres.classList.remove('bg-orange-600', 'text-white');
+                }
+            }
+
+
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    tabContents.forEach(content => {
+                        if (content.id === `tab-content-${tabId}`) {
+                            content.classList.remove('hidden');
+                        } else {
+                            content.classList.add('hidden');
+                        }
+                    });
+                });
+            });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 150) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').includes(current)) {
+                        link.classList.add('active');
+                    }
+                })
+            });
+
+        });
+    </script>
+</body>
+
+</html>
